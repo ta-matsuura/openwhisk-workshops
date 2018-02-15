@@ -89,7 +89,7 @@ We wish you a lot of fun and success...
 
 # Serverless Computing
 
-**Serverless computing** (aka **Funcions-as-a-Service (FaaS)**) refers to a model where the existence of servers is entirely abstracted away. I.e. that even though servers still exist, developers are relieved from the need to care about their operation. They are relieved from the need to worry about low-level infrastructural and operational details such as scalability, high-availability, infrastructure-security, and so forth. Hence, serverless computing is essentially about reducing maintenance efforts to allow developers to quickly focus on developing value-adding code.
+**Serverless computing** (aka **Functions-as-a-Service (FaaS)**) refers to a model where the existence of servers is entirely abstracted away. I.e. that even though servers still exist, developers are relieved from the need to care about their operation. They are relieved from the need to worry about low-level infrastructural and operational details such as scalability, high-availability, infrastructure-security, and so forth. Hence, serverless computing is essentially about reducing maintenance efforts to allow developers to quickly focus on developing value-adding code.
 
 Serverless computing simplifies developing cloud-native applications, especially microservice-oriented solutions that decompose complex applications into small and independent modules that can be easily exchanged.
 
@@ -141,9 +141,21 @@ In order to use OpenWhisk proceed as follows:
 5. Click the `Download CLI` button
 6. Follow steps 1 to 3 (you do not necessarily need to perform step 4), i.e. download the CLI for your particular platform, install OpenWhisk plugin, login to Bluemix specifying the api endpoint, organization and namespace.
 
+> We recommend you install the IBM Cloud Functions shell in addition to the CLI. The shell supports most CLI commands and offers a lot more in a convenient UI. The shell combines a terminal-like panel on the left with a multifunction panel that slides in from the right when needed - the sidecar. This sidecar supports many tasks: editing code, inspecting executions, gathering statistics, etc. See [https://github.com/ibm-functions/shell](https://github.com/ibm-functions/shell) for details.
+>
+> The shell is distributed through the node package manager (TODO: add version requirement).
+>
+> `npm install -g @ibm-functions/shell`
+>
+> To start the shell in interactive mode use:
+>
+> `fsh shell`
+>
+> Look for quoted paragraphs for shell-specific instructions.
+
 # Start your engines!
 
-The CLI allows you to work with OpenWhisk's basic entities, i.e. to create *actions, triggers, rules, and sequences*. Hence, let's learn how to work with the CLI.
+The CLI and shell allow you to work with OpenWhisk's basic entities, i.e. to create *actions, triggers, rules, and sequences*. Hence, let's learn how to work with these.
 
 ## Actions
 
@@ -170,6 +182,26 @@ $ bx wsk action create hello hello.js
 <b>ok:</b> created action <b>hello</b>
 </pre>
 
+> The shell offers a simple editor. To create a new action called `hello` from the shell use command:
+>
+>`new hello`
+>
+> This command opens the sidecar with an editor panel. Complete your edits and click on `Deploy` under the editor panel.
+
+> To edit an exiting `hello` action use instead:
+>
+> `edit hello`
+>
+> This command retrieves the code of the deployed action and makes it available for editing.
+
+> Most CLI commands starting with `bx wsk` are available in the shell, for instance:
+>
+> `bx wsk action create hello hello.js`
+>
+> The `bx` prefix is optional in the shell. So the following command is also valid:
+>
+> `wsk action create hello hello.js`
+
 Notice that you can always list the actions you have already created like this:
 
 <pre>
@@ -178,11 +210,13 @@ $ bx wsk action list
 hello                                  private nodejs:6
 </pre>
 
+> In the shell, clicking on an action in the list loads the action in the sidecar. Click on the lock under the sidecar to edit the action code or use the bottom tabs to navigate between various views of the actions.
+
 To run an action use the ```bx wsk action invoke``` command.
 A *blocking* (i.e. *synchronous*) invocation waits until the action has completed and returned a result. It is indicated by the ```--blocking``` option (or ```-b``` for short):
 
 <pre>
-$ bx wsk action invoke --blocking hello
+$ bx wsk action invoke hello --blocking
 <b>ok:</b> invoked <b>hello</b> with id <b>dde9212e686f413bb90f22e79e12df74</b>
 [...]
 "response": {
@@ -198,6 +232,10 @@ $ bx wsk action invoke --blocking hello
 The above command outputs two important pieces of information:
 *	the ```activation id``` (```dde9212e686f413bb90f22e79e12df74```)
 *	the ```activation response``` which includes the result
+
+> The `blocking` option is implicit in the shell. For a non-blocking invocation use command:
+>
+> `wsk action async hello`
 
 The ```activation id``` can be used to retrieve the logs or the result of an (asynchronous) invocation at a future point in time. In case you forgot to note down an `activation id` you can retrieve the list of activations at any time:
 
@@ -226,6 +264,8 @@ $ bx wsk activation get dde9212e686f413bb90f22e79e12df74
 },
 [...]
 </pre>
+
+> Or simply click on the activation id to open the activation in the sidecar when using the shell.
 
 You can delete an action like this:
 
@@ -297,6 +337,8 @@ $ bx wsk activation get b066ca51e68c4d3382df2d8033265db0
 }
 </pre>
 
+> The duration is shown in the top-right corner of the sidecar. Select the `Raw` tab to find the start and end times.
+
 By looking at the `duration` entry being shown as part of the activation record, you can see that this activation took slightly over two seconds to complete.
 
 ### Passing parameters to actions
@@ -328,6 +370,10 @@ $ bx wsk action invoke -b hello -p name "Bernie" -p place "Vermont" --result
 </pre>
 
 Notice the use of the `--result` parameter (or `-r` for short; available for blocking invocations only) to immediately print the result of the action invocation without the need of an `activation id`.
+
+> Do not use `--result`, `--blocking`, `-br`, `-b`, or `-r` in the shell. Use:
+>
+> `bx wsk action invoke hello -p name "Bernie" -p place "Vermont"`
 
 ### Setting default parameters
 
@@ -396,6 +442,8 @@ $ bx wsk action invoke --blocking --result yahooWeather --param location "Brookl
 }
 </pre>
 
+> `bx wsk action invoke yahooWeather --param location`
+
 ### Working with packages and sequencing actions
 
 You can also create an action that chains together a *sequence* of actions.
@@ -431,6 +479,10 @@ $ bx wsk package get --summary /whisk.system/cloudant
 [...]
 </pre>
 
+> Do not specify the `--summary` option when using the shell:
+>
+> `bx wsk package get /whisk.system/cloudant`
+
 The output shows that the `/whisk.system/cloudant` package provides multiple actions, e.g. `read` and `write`, and a trigger *feed* called `changes`. The `changes` feed causes triggers to be fired when documents are added to the specified *Cloudant* database.
 
 The package also defines the parameters `username`, `password`, `host`, and `port`. These parameters must be specified for the actions and feeds to be meaningful. The parameters allow the actions to operate on a specific *Cloudant* account.
@@ -447,6 +499,10 @@ To create a binding run the following command:
 $ bx wsk package bind /whisk.system/utils myUtil
 <b>ok:</b> created binding <b>myUtil</b>
 </pre>
+
+> Omit the leading slash when using the shell:
+>
+> `bx wsk package bind whisk.system/utils myUtil`
 
 This gives you access to the following actions:
 * `myUtil/cat`: Action to transform lines of text into a *JSON* array
@@ -471,6 +527,8 @@ $ bx wsk action invoke -b myAction -p lines '["c","b","a"]' --result
     "num": 1
 }
 </pre>
+
+> `bx wsk action invoke myAction -p lines '["c","b","a"]'`
 
 You can see that the first element of the sorted array is returned.
 
@@ -616,6 +674,8 @@ $ bx wsk action invoke --blocking --result packageAction --param lines '["and no
     ]
 }
 </pre>
+
+> `bx wsk action invoke packageAction --param lines '["and now", "for something completely", "different"]'`
 
 Finally, notice that while most `npm` packages install *JavaScript* sources on `npm install`, some also install and compile binary artifacts. The archive file upload currently does not support binary dependencies but rather only *JavaScript* dependencies. Action invocations may fail if the archive includes binary dependencies.
 

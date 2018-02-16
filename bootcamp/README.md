@@ -233,7 +233,7 @@ The above command outputs two important pieces of information:
 *	the ```activation id``` (```dde9212e686f413bb90f22e79e12df74```)
 *	the ```activation response``` which includes the result
 
-> The `blocking` option is implicit in the shell. Do not use the `--result`, `--blocking`, `-br`, `-b`, or `-r` options. Invoke the `hello` action with command:
+> The `blocking` option is implicit in the shell. Invoke the `hello` action with command:
 >
 > `bx wsk action invoke hello`
 >
@@ -325,6 +325,8 @@ $ bx wsk action invoke --blocking --result asyncAction
 }
 </pre>
 
+> Or simple use `new asyncAction` in the shell.
+
 Finally, run the following commands to fetch the activation log to see how long the activation took to complete:
 
 <pre>
@@ -375,10 +377,6 @@ $ bx wsk action invoke -b hello -p name "Bernie" -p place "Vermont" --result
 
 Notice the use of the `--result` parameter (or `-r` for short; available for blocking invocations only) to immediately print the result of the action invocation without the need of an `activation id`.
 
-> Do not use the `--result`, `--blocking`, `-br`, `-b`, or `-r` options in the shell. Use:
->
-> `bx wsk action invoke hello -p name "Bernie" -p place "Vermont"`
-
 ### Setting default parameters
 
 Recall that the `hello` action above took two parameters: the `name` of a person, and the `place` where he or she is from.
@@ -386,9 +384,13 @@ Recall that the `hello` action above took two parameters: the `name` of a person
 Rather than passing all the parameters to an action every time, you can *bind* certain parameters. Let's bind the `place` parameter above so we have an action that defaults to the place `Vermont, CT`:
 
 <pre>
-$ bx wsk action create helloBindParams hello.js --param place "Vermont, CT"
+$ bx wsk action create helloBindParams --copy hello --param place "Vermont, CT"
 <b>ok:</b> created action <b>helloBindParams</b>
+</pre>
 
+Notice that we chose to copy an existing action instead of specifying a file with the action code.
+
+<pre>
 $ bx wsk action invoke -b helloBindParams --param name "Bernie" --result
 {
     "message": "Hello, Bernie from Vermont, CT"
@@ -446,8 +448,6 @@ $ bx wsk action invoke --blocking --result yahooWeather --param location "Brookl
 }
 </pre>
 
-> `bx wsk action invoke yahooWeather --param location "Brooklyn, NY"`
-
 ### Working with packages and sequencing actions
 
 You can also create an action that chains together a *sequence* of actions.
@@ -474,7 +474,7 @@ $ bx wsk package list /whisk.system
 Next, to reveal the list of entities contained in the `/whisk.system/cloudant` package run the following command:
 
 <pre>
-$ bx wsk package get --summary /whisk.system/cloudant
+$ bx wsk package get /whisk.system/cloudant --summary
 <b>package</b> /whisk.system/cloudant: Cloudant database service
    (<b>parameters</b>: BluemixServiceName host username password dbname includeDoc overwrite)
 <b>action</b> /whisk.system/cloudant/read: Read document from database
@@ -482,10 +482,6 @@ $ bx wsk package get --summary /whisk.system/cloudant
 <b>feed</b> /whisk.system/cloudant/changes: Database change feed
 [...]
 </pre>
-
-> Do not specify the `--summary` option when using the shell:
->
-> `bx wsk package get /whisk.system/cloudant`
 
 The output shows that the `/whisk.system/cloudant` package provides multiple actions, e.g. `read` and `write`, and a trigger *feed* called `changes`. The `changes` feed causes triggers to be fired when documents are added to the specified *Cloudant* database.
 
@@ -531,8 +527,6 @@ $ bx wsk action invoke -b myAction -p lines '["c","b","a"]' --result
     "num": 1
 }
 </pre>
-
-> `bx wsk action invoke myAction -p lines '["c","b","a"]'`
 
 You can see that the first element of the sorted array is returned.
 
@@ -678,8 +672,6 @@ $ bx wsk action invoke --blocking --result packageAction --param lines '["and no
     ]
 }
 </pre>
-
-> `bx wsk action invoke packageAction --param lines '["and now", "for something completely", "different"]'`
 
 Finally, notice that while most `npm` packages install *JavaScript* sources on `npm install`, some also install and compile binary artifacts. The archive file upload currently does not support binary dependencies but rather only *JavaScript* dependencies. Action invocations may fail if the archive includes binary dependencies.
 

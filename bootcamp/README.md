@@ -325,7 +325,7 @@ $ bx wsk action invoke --blocking --result asyncAction
 }
 </pre>
 
-> Or simple use `new asyncAction` in the shell.
+> Or simply use `new asyncAction` in the shell.
 
 Finally, run the following commands to fetch the activation log to see how long the activation took to complete:
 
@@ -597,6 +597,8 @@ $ bx wsk activation result 12ca88d404ca456eb2e76357c765ccdb
 }
 </pre>
 
+> Simply click on the activation id in the shell, or use `bx wsk activation get` rather than `bx wsk activation result`.
+
 We can finally see that the `hello` action received the event payload and returned the expected string.
 
 ## Uploading dependencies
@@ -646,6 +648,10 @@ Next, create a .zip archive containing all files (including all dependencies):
 <pre>
 $ zip -r action.zip *
 </pre>
+
+> In the shell, prefix bash commands with a bang and a space:
+>
+> `! zip -r action.zip *`
 
 Next, create the action:
 
@@ -803,7 +809,13 @@ Web action activations will be associated with the user that created the action.
 <pre>
 $ bx wsk action update hello --web true
 <b>ok:</b> updated action <b>hello</b>
+
+$ bx wsk action get hello --url
+<b>ok:</b> got action hello
+https://openwhisk.ng.bluemix.net/api/v1/web/andreas.nauerz@de.ibm.com_dev/default/hello
 </pre>
+
+> No need for the second command in the shell.
 
 Once enabled your action is supposed to be accessible as a web action via a new *REST* interface.
 

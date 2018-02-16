@@ -143,9 +143,9 @@ In order to use OpenWhisk proceed as follows:
 
 > We recommend you install the IBM Cloud Functions Shell in addition to the CLI. The shell supports most CLI commands and offers a lot more in a convenient UI. The shell combines a terminal-like panel on the left with a multifunction panel that slides in from the right when needed - the sidecar. This sidecar supports many tasks: editing code, inspecting executions, gathering statistics, etc. See [https://github.com/ibm-functions/shell](https://github.com/ibm-functions/shell) for details.
 >
-> The shell is distributed through the node package manager (TODO: add version requirement).
+> The shell is distributed through the node package manager. Make sure to specify the `@index` tag to get the right releasef for this workshop:
 >
-> `npm install -g @ibm-functions/shell`
+> `npm install -g @ibm-functions/shell@index`
 >
 > To start the shell in interactive mode use:
 >
@@ -499,10 +499,6 @@ To create a binding run the following command:
 $ bx wsk package bind /whisk.system/utils myUtil
 <b>ok:</b> created binding <b>myUtil</b>
 </pre>
-
-> Omit the leading slash when using the shell:
->
-> `bx wsk package bind whisk.system/utils myUtil`
 
 This gives you access to the following actions:
 * `myUtil/cat`: Action to transform lines of text into a *JSON* array

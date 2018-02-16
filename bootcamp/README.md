@@ -83,7 +83,7 @@ Before you start, please note that **IBM Bluemix OpenWhisk** has recently been r
 
 In the following we will, for reasons of simplicity and since most examples would also work on any (locally) hosted OpenWhisk deployment, refer to **OpenWhisk** only and not distinguish between Apache OpenWhisk and IBM Cloud Functions even though we will run many of the examples on top of IBM Cloud.
 
-During this workshop you will learn how to develop **serverless applications** composed of loosely coupled microservice-like functions. You'll explore OpenWhisk's latest *CLI* (command line interface) and UI and become an OpenWhisk star by implementing a weather bot using *IBM's Weather Company Data service* and *Slack*. You will also investigate how to use other capabilities such us our API Gateway integration allowing you to easily expose functions via API endpoints. You will have a first glance at our research-driven tech-preview called *Composer* allowing you to compose more complex serverless applications by combining multiple functions using control logic and state. Finally, you will find out how to package and deploy your entire serverless application together using the *Serverless Framework*.
+During this workshop you will learn how to develop **serverless applications** composed of loosely coupled microservice-like functions. You'll explore OpenWhisk's latest *CLI* (command line interface) and UI and become an OpenWhisk star by implementing a weather bot using *IBM's Weather Company Data service* and *Slack*. You will also investigate how to use other capabilities such us our API Gateway integration allowing you to easily expose functions via API endpoints. You will have a first glance at our research-driven tech-preview called *Composer* allowing you to compose more complex serverless applications by combining multiple functions using control logic and state. You will also discover the new IBM Cloud Functions Shell (also a research-driven tech-preview).
 
 We wish you a lot of fun and success...
 
@@ -129,7 +129,7 @@ Developers only need to care about implementing the desired application logic - 
 A few important notes before you start:
 * When working through the lab you may see slightly different responses being returned from your CLI than those printed as part of these instructions.<br/>You do not need to worry about this. The reason is that you may use a different namespace than the one we used when generating this document; the differences will be minor and only result in some name-prefixing.
 * Important remark for *Linux* users: You may need to install a few additional tools like `cURL` (e.g. for *Ubuntu* you can install this via `sudo apt-get update && sudo apt-get install curl`)
-* Important remark for *Windows* users: Windows users are strongly advised to download *Git* (https://git-for-windows.github.io/) and to work from the *Git bash*. They are also advised to download `cURL` for Windows (https://curl.haxx.se/download.html)
+* Important remark for *Windows* users: You may need to install a few additional tools like `cURL` (https://curl.haxx.se/download.html).
 
 In order to use OpenWhisk proceed as follows:
 1. Open a browser window
@@ -141,7 +141,7 @@ In order to use OpenWhisk proceed as follows:
 5. Click the `Download CLI` button
 6. Follow steps 1 to 3 (you do not necessarily need to perform step 4), i.e. download the CLI for your particular platform, install OpenWhisk plugin, login to Bluemix specifying the api endpoint, organization and namespace.
 
-> We recommend you install the IBM Cloud Functions shell in addition to the CLI. The shell supports most CLI commands and offers a lot more in a convenient UI. The shell combines a terminal-like panel on the left with a multifunction panel that slides in from the right when needed - the sidecar. This sidecar supports many tasks: editing code, inspecting executions, gathering statistics, etc. See [https://github.com/ibm-functions/shell](https://github.com/ibm-functions/shell) for details.
+> We recommend you install the IBM Cloud Functions Shell in addition to the CLI. The shell supports most CLI commands and offers a lot more in a convenient UI. The shell combines a terminal-like panel on the left with a multifunction panel that slides in from the right when needed - the sidecar. This sidecar supports many tasks: editing code, inspecting executions, gathering statistics, etc. See [https://github.com/ibm-functions/shell](https://github.com/ibm-functions/shell) for details.
 >
 > The shell is distributed through the node package manager (TODO: add version requirement).
 >
@@ -151,7 +151,7 @@ In order to use OpenWhisk proceed as follows:
 >
 > `fsh shell`
 >
-> Look for quoted paragraphs for shell-specific instructions.
+> The shell is a _research-driven tech-preview_ and is still under heavy development. While the syntax of many commands is identical between the CLI and the shell, there are minor discrepancies. Look for quoted paragraphs for shell-specific instructions.
 
 # Start your engines!
 
@@ -182,7 +182,7 @@ $ bx wsk action create hello hello.js
 <b>ok:</b> created action <b>hello</b>
 </pre>
 
-> The shell offers a simple editor. To create a new action called `hello` from the shell use command:
+> The shell embeds a simple editor. To create a new action called `hello` from the shell use command:
 >
 >`new hello`
 >
@@ -198,7 +198,7 @@ $ bx wsk action create hello hello.js
 >
 > `bx wsk action create hello hello.js`
 >
-> The `bx` prefix is optional in the shell. So the following command is also valid:
+> The `bx` prefix is optional in the shell, so the following command is also valid:
 >
 > `wsk action create hello hello.js`
 
@@ -210,7 +210,7 @@ $ bx wsk action list
 hello                                  private nodejs:6
 </pre>
 
-> In the shell, clicking on an action in the list loads the action in the sidecar. Click on the lock under the sidecar to edit the action code or use the bottom tabs to navigate between various views of the actions.
+> In the shell, clicking on an action in the list loads the action in the sidecar. Click on the lock under the sidecar to edit the action code or use the bottom tabs to navigate between various views of the action.
 
 To run an action use the ```bx wsk action invoke``` command.
 A *blocking* (i.e. *synchronous*) invocation waits until the action has completed and returned a result. It is indicated by the ```--blocking``` option (or ```-b``` for short):
@@ -233,9 +233,13 @@ The above command outputs two important pieces of information:
 *	the ```activation id``` (```dde9212e686f413bb90f22e79e12df74```)
 *	the ```activation response``` which includes the result
 
-> The `blocking` option is implicit in the shell. For a non-blocking invocation use command:
+> The `blocking` option is implicit in the shell. Do not use the `--result`, `--blocking`, `-br`, `-b`, or `-r` options. Invoke the `hello` action with command:
 >
-> `wsk action async hello`
+> `bx wsk action invoke hello`
+>
+> To avoid waiting on the result of a long invocation, use command:
+>
+> `bx wsk action async hello`
 
 The ```activation id``` can be used to retrieve the logs or the result of an (asynchronous) invocation at a future point in time. In case you forgot to note down an `activation id` you can retrieve the list of activations at any time:
 
@@ -371,7 +375,7 @@ $ bx wsk action invoke -b hello -p name "Bernie" -p place "Vermont" --result
 
 Notice the use of the `--result` parameter (or `-r` for short; available for blocking invocations only) to immediately print the result of the action invocation without the need of an `activation id`.
 
-> Do not use `--result`, `--blocking`, `-br`, `-b`, or `-r` in the shell. Use:
+> Do not use the `--result`, `--blocking`, `-br`, `-b`, or `-r` options in the shell. Use:
 >
 > `bx wsk action invoke hello -p name "Bernie" -p place "Vermont"`
 
@@ -442,7 +446,7 @@ $ bx wsk action invoke --blocking --result yahooWeather --param location "Brookl
 }
 </pre>
 
-> `bx wsk action invoke yahooWeather --param location`
+> `bx wsk action invoke yahooWeather --param location "Brooklyn, NY"`
 
 ### Working with packages and sequencing actions
 

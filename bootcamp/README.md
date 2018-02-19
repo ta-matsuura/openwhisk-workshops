@@ -274,6 +274,16 @@ $ bx wsk activation get dde9212e686f413bb90f22e79e12df74
 
 > Or simply click on the activation id to open the corresponding activation in the sidecar when using the shell.
 
+> The shell offers mutiple views of recent activations:
+>
+> `bx wsk activation grid` visualizes recent activations in a grid format that makes it easy to detect outliers (failed activations, slow activations).
+>
+> `bx wsk activation timeline` visualizes recent activations in a timeline.
+>
+> `bx wsk activation table` visualizes the range of execution times for recent activations.
+>
+> These commands support various filtering options. Run, e.g., `bx wsk activation timeline --help` for details.
+
 You can delete an action like this:
 
 <pre>
@@ -531,6 +541,8 @@ You can see that the first element of the sorted array is returned.
 
 For learning how to create our own packages to enable services refer to the official documentation available here:
 https://github.com/openwhisk/openwhisk/blob/master/docs/packages.md#creating-and-using-package-bindings
+
+Our research-driven tech-preview called *Composer* allows for more complex serverless [compositions](#composing-more-complex-serverless-applications).
 
 ## Triggers and rules
 

@@ -1531,7 +1531,7 @@ $ bx wsk api create /fibonacci get fibonacci
 https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/8326f1d8a3dbc5afd14413a2682b7a78e17a55ee352f6c03f6be82718d69726e/fibonacci
 </pre>
 
-> `bx wsk api` commands are not supported in the shell yet. Please use the CLI or escape theses commands with a `!` in the shell.
+> `bx wsk api` commands are not supported in the shell yet. Please use the CLI or escape these commands with a `!` in the shell.
 
 So, let's try it out:
 
@@ -1830,12 +1830,12 @@ Composer has two parts: The first is a library for describing compositions, prog
 
 ## Getting started
 
-To work with compositions the new functions programming shell (aka `fsh`) is required.
+To work with compositions the new Cloud Functions Shell (aka `fsh`) is required.
 
-Hence, let's first install `fsh`:
+Hence, please install `fsh` if you have not done so yet.
 
 <pre>
-$ npm install -g @ibm-functions/shell
+$ npm install -g @ibm-functions/shell@index
 </pre>
 
 After the installation, you can find out about `fsh`'s basic capabilities like this:
@@ -1900,23 +1900,23 @@ function main() {
 Next, deploy the three functions:
 
 <pre>
-$ fsh action create condition condition.js
-$ fsh action create success success.js
-$ fsh action create failure failure.js
+$ bx wsk action create condition condition.js
+$ bx wsk action create success success.js
+$ bx wsk action create failure failure.js
 </pre>
 
 Next, deploy the actual composition:
 
 <pre>
-$ fsh app create demo_if demo_if.js
+$ fsh wsk app create demo_if demo_if.js
 </pre>
 
-Before invoking the composition one can visualize it by entering `fsh app preview demo_if.js`.
+Before invoking the composition one can visualize it by entering `fsh wsk app preview demo_if.js`.
 
 Next, invoke the composition, first without specifing a password which should cause the function `condition` to return `false` and hence the function `failure` to be invoked:
 
 <pre>
-$ fsh app invoke demo_if
+$ fsh wsk app invoke demo_if
 {
     message: "Failure"
 }
@@ -1925,13 +1925,13 @@ $ fsh app invoke demo_if
 Finally, invoke the composition again, this time with specifing the password `andreas` which should cause the function `condition` to return `true` and hence the function `success` to be invoked:
 
 <pre>
-$ fsh app invoke demo_if -p password andreas
+$ fsh wsk app invoke demo_if -p password andreas
 {
     message: "Success"
 }
 </pre>
 
-By entering `fsh session get <session id>` one can also visualize the results of an invocation - try it out!
+By entering `fsh wsk ession get <session id>` one can also visualize the results of an invocation - try it out!
 
 ## More Compositions
 
@@ -1960,14 +1960,14 @@ Notice that the output of each invocation serves as input for the next invocatio
 Next, deploy the function and composition:
 
 <pre>
-$ fsh action create task_repeat task_repeat.js
-$ fsh app create demo_repeat demo_repeat.js
+$ fsh wsk action create task_repeat task_repeat.js
+$ fsh wsk app create demo_repeat demo_repeat.js
 </pre>
 
 Next, invoke the composition:
 
 <pre>
-$ fsh app invoke demo_repeat -p count 10
+$ fsh wsk app invoke demo_repeat -p count 10
 {
     count: 15
 }
@@ -2010,15 +2010,15 @@ function main(params) {
 Next, deploy the functions and composition:
 
 <pre>
-$ fsh action create condition_while condition_while.js
-$ fsh action create task_while task_while.js
-$ fsh app create demo_while demo_while.js
+$ bx wsk action create condition_while condition_while.js
+$ bx wsk action create task_while task_while.js
+$ fsh wsk app create demo_while demo_while.js
 </pre>
 
 Next, invoke the composition:
 
 <pre>
-$ fsh app invoke demo_while -p count 10
+$ fsh wsk app invoke demo_while -p count 10
 {
     count: 18
 }
@@ -2026,7 +2026,7 @@ $ fsh app invoke demo_while -p count 10
 
 Notice that you may get a different result (count) due to the random number being relevant here.
 
-Once again, we recommend entering `fsh session get <session id>` again to visualize the results of the invocations.
+Once again, we recommend entering `fsh wsk session get <session id>` again to visualize the results of the invocations.
 
 An overview of all currently available compositions can be found here:
 https://github.com/ibm-functions/composer/tree/master/docs#compositions-by-example
@@ -2064,15 +2064,15 @@ The `composer.sequence(task_1, task_2, ...)` composition runs a sequence of task
 Now, let's deploy all artifacts:
 
 <pre>
-$ fsh action create task_reverse task_reverse.js
-$ fsh action create task_output task_output.js
-$ fsh app create demo_nesting demo_nesting.js
+$ bx wsk action create task_reverse task_reverse.js
+$ bx wsk action create task_output task_output.js
+$ fsh wsk app create demo_nesting demo_nesting.js
 </pre>
 
 Unfortunately, when invoking the composition we do not get really what we want:
 
 <pre>
-fsh invoke demo_nesting -p input myText -r
+fsh wsk app invoke demo_nesting -p input myText -r
 {
     message: "undefined reverted is: txeTym"
 }
@@ -2104,14 +2104,14 @@ The "second" `params` results from the use of the `retain` composition and provi
 Let's update the artifacts:
 
 <pre>
-$ fsh action update task_output task_output.js
-$ fsh app update demo_nesting demo_nesting.js
+$ bx action update task_output task_output.js
+$ fsh wsk app update demo_nesting demo_nesting.js
 </pre>
 
 And try again:
 
 <pre>
-fsh invoke demo_nesting -p input myText -r
+fsh wsk app invoke demo_nesting -p input myText -r
 {
     message: "myText reverted is: txeTym"
 }
@@ -2119,7 +2119,7 @@ fsh invoke demo_nesting -p input myText -r
 
 Works like a charm.
 
-Once again, we recommend entering `fsh session get <session id>` again to visualize the results of the invocations.
+Once again, we recommend entering `fsh wsk session get <session id>` again to visualize the results of the invocations.
 
 ## Inline coding
 
@@ -2135,13 +2135,13 @@ composer.task(params => ({message: `Hello ${params.name}!`}))
 Then, deploy it:
 
 <pre>
-$ fsh app create demo_inline demo_inline.js
+$ fsh wsk app create demo_inline demo_inline.js
 </pre>
 
 Finally, let's simply invoke it:
 
 <pre>
-fsh invoke demo_inline -p name Andreas -r
+fsh wsk app invoke demo_inline -p name Andreas -r
 {
     message: "Hello Andreas!"
 }

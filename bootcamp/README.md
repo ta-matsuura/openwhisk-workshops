@@ -85,6 +85,8 @@ In the following we will, for reasons of simplicity and since most examples woul
 
 During this workshop you will learn how to develop **serverless applications** composed of loosely coupled microservice-like functions. You'll explore OpenWhisk's latest *CLI* (command line interface) and UI and become an OpenWhisk star by implementing a weather bot using *IBM's Weather Company Data service* and *Slack*. You will also investigate how to use other capabilities such us our API Gateway integration allowing you to easily expose functions via API endpoints. You will have a first glance at our research-driven tech-preview called *Composer* allowing you to compose more complex serverless applications by combining multiple functions using control logic and state. You will also discover the new IBM Cloud Functions Shell (also a research-driven tech-preview).
 
+We recommend you follow the first few sections of this document in order, build the weather bot and discover API Gateway. The later sections discuss more advanced topics and can be explored in any order.
+
 We wish you a lot of fun and success...
 
 # Serverless Computing
@@ -127,9 +129,8 @@ Developers only need to care about implementing the desired application logic - 
 # Prepare your engines!
 
 A few important notes before you start:
-* When working through the lab you may see slightly different responses being returned from your CLI than those printed as part of these instructions.<br/>You do not need to worry about this. The reason is that you may use a different namespace than the one we used when generating this document; the differences will be minor and only result in some name-prefixing.
-* Important remark for *Linux* users: You may need to install a few additional tools like `cURL` (e.g. for *Ubuntu* you can install this via `sudo apt-get update && sudo apt-get install curl`)
-* Important remark for *Windows* users: You may need to install a few additional tools like `cURL` (https://curl.haxx.se/download.html).
+* When working through the lab you may see slightly different responses being returned from your CLI or shell than those printed as part of these instructions.<br/>You do not need to worry about this. The reason is that you may use a different namespace than the one we used when generating this document; the differences will be minor and only result in some name-prefixing.
+* You may need to install a few additional tools like `cURL`, the `Node.js` runtime, and the `Node Package Manager`. See https://curl.haxx.se/download.html and https://nodejs.org/en/. We recommend you install the LTS version of `Node.js`.
 
 In order to use OpenWhisk proceed as follows:
 1. Open a browser window
@@ -143,7 +144,7 @@ In order to use OpenWhisk proceed as follows:
 
 > We recommend you install the IBM Cloud Functions Shell in addition to the CLI. The shell supports most CLI commands and offers a lot more in a convenient UI. The shell combines a terminal-like panel on the left with a multifunction panel that slides in from the right when needed - the sidecar. This sidecar supports many tasks: editing code, inspecting executions, gathering statistics, etc. See [https://github.com/ibm-functions/shell](https://github.com/ibm-functions/shell) for details.
 >
-> The shell is distributed through the node package manager. Make sure to specify the `@index` tag to get the right releasef for this workshop:
+> The shell is distributed through the `Node Package Manager`. We recommend you install the shell globally (with option `-g`). Make sure to specify the `@index` tag to get the right release for this workshop:
 >
 > `npm install -g @ibm-functions/shell@index`
 >
@@ -197,7 +198,7 @@ $ bx wsk action create hello hello.js
 > Most CLI commands starting with `bx wsk` are available in the shell, for instance:
 >
 > `bx wsk action create hello hello.js`
->
+
 > The `bx` prefix is optional in the shell, so the following command is also valid:
 >
 > `wsk action create hello hello.js`
@@ -236,7 +237,7 @@ The above command outputs two important pieces of information:
 > The `blocking` option is implicit in the shell. Invoke the `hello` action with command:
 >
 > `bx wsk action invoke hello`
->
+
 > To avoid waiting on the result of a long invocation, use command:
 >
 > `bx wsk action async hello`
@@ -251,6 +252,8 @@ eee9212e686f413bb90f22e79e12df74             hello
 </pre>
 
 Notice that the list of ```activation ids``` is ordered with the most recent one first.
+
+> The same command in the shell provides a lot more information about these activations including duration and status (failure or success). Moreover, clicking on one of the activation ids loads the corresponding activation into the sidecar.
 
 To obtain the result of a particular action invocation enter (notice that you need to replace the ```activation id``` shown below with the ```id``` you have received during the previous step):
 
@@ -269,7 +272,7 @@ $ bx wsk activation get dde9212e686f413bb90f22e79e12df74
 [...]
 </pre>
 
-> Or simply click on the activation id to open the activation in the sidecar when using the shell.
+> Or simply click on the activation id to open the corresponding activation in the sidecar when using the shell.
 
 You can delete an action like this:
 
@@ -1409,12 +1412,16 @@ $ bx wsk package get /whisk.system/alarms --summary
    (<b>parameters</b>: cron trigger_payload)
  </b>feed</b>   /whisk.system/alarms/alarm: Fire trigger when alarm occurs
 
-$ bx wsk trigger create regular_forecast --feed /whisk.system/alarms/alarm -p cron "*/10 * * * * *" -p trigger_payload "{\"text\":\"London\"}"
+$ bx wsk trigger create regular_forecast --feed /whisk.system/alarms/alarm -p cron '*/10 * * * * *' -p trigger_payload "{\"text\":\"London\"}"
 <b>ok:</b> created trigger <b>feed regular_forecast</b>
 
 $ bx wsk rule create regular_forecast_rule regular_forecast location_forecast
 <b>ok:</b> created rule <b>regular_forecast_rule</b>
 </pre>
+
+> The `--feed` option is not supported in the shell yet. Please escape the command with a `!`:
+>
+> `! bx wsk trigger create regular_forecast --feed /whisk.system/alarms/alarm -p cron '*/10 * * * * *' -p trigger_payload "{\"text\":\"London\"}"`
 
 The trigger schedule is provided by the `cron` parameter, which we've set up to run every ten seconds to test it out. By binding this new trigger to our bot service, the forecast for London starts to appear in the channel.
 
@@ -1523,6 +1530,8 @@ $ bx wsk api create /fibonacci get fibonacci
 <b>ok:</b> created API /fibonacci GET for action <b>/_/fibonacci</b>
 https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/8326f1d8a3dbc5afd14413a2682b7a78e17a55ee352f6c03f6be82718d69726e/fibonacci
 </pre>
+
+> `bx wsk api` commands are not supported in the shell yet. Please use the CLI or escape theses commands with a `!` in the shell.
 
 So, let's try it out:
 

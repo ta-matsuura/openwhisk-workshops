@@ -1866,6 +1866,18 @@ Usage information:
 [...]
 </pre>
 
+To use compositions, you also need to create a `Compose for Redis` service instance.
+To do so click the `Catalog` link at the top right of the screen.
+Search for and select `Compose for Redis`.
+Leave all settings as they are except for `TLS Enabled` that must be set to `False`.
+Click the `Create` button at the bottom right of the screen.
+Next, switch to the `Service Credentials` tab and click the `New Credentials` button.
+Click on `Add`, then on `View Credentials`, scroll, and note the `uri` value `redis://admin:<password>@<ip>:<port>`. Finally run command:
+
+<pre>
+$ fsh app init --reset --url redis://admin:&lt;password&gt;@&lt;ip&gt;:&lt;port&gt;
+</pre>
+
 ## Your first Composition
 
 Compositions can be defined via JSON or, alternatively, using Node code that relies on the Composer SDK. In the following we will focus on the second approach which usually feels more natural for developers.

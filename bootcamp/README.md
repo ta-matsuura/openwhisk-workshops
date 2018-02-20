@@ -153,6 +153,12 @@ In order to use OpenWhisk proceed as follows:
 > `fsh shell`
 >
 > The shell is a _research-driven tech-preview_ and is still under heavy development. While the syntax of many commands is identical between the CLI and the shell, there are minor discrepancies. Look for quoted paragraphs for shell-specific instructions.
+>
+> To get help in the shell, use the `help` command. Commands are organized into a tree, i.e., hierarchical groups. Try `help wsk` and `help wsk action` to get help resp. on the `/wsk` and `/wsk/action` command subtrees. For help on a specify command, try the command with option `--help`.
+>
+> The shell has a notion of current context, i.e., a path in the command tree. Commands my be abbreviated depending on the current context. For instance, `wsk action create hello hello.js` may be abbreviated to `create hello hello.js` when in the `/wsk/action` context. Use command `context` to display the current context and command `cd` to change the current context. Some shell commands implicity change the context.
+>
+> For simplicity, this document only uses fully qualified commands, i.e., commands valid in any context.
 
 # Start your engines!
 

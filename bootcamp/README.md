@@ -286,7 +286,7 @@ $ bx wsk activation get dde9212e686f413bb90f22e79e12df74
 >
 > `bx wsk activation timeline` visualizes recent activations in a timeline.
 >
-> `bx wsk activation table` visualizes the range of execution times for recent activations.
+> `bx wsk activation summary` visualizes the range of execution times for recent activations.
 >
 > These commands support various filtering options. Run, e.g., `bx wsk activation timeline --help` for details.
 
